@@ -2,8 +2,8 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Organize C:\Users\Darkover\Downloads by file type
-$base = "C:\Users\Darkover\Downloads"
+# Organize Downloads by file type (path = текущий пользователь)
+$base = Join-Path $env:USERPROFILE "Downloads"
 Set-Location $base
 
 $folders = @{
