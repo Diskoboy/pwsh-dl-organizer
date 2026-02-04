@@ -1,0 +1,16 @@
+# Windows
+desktop.ini
+Thumbs.db
+*.lnk
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs (if added later)
+*.log
+
+# Local config (if added later)
+config.local.ps1
