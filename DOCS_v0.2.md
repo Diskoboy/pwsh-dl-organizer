@@ -7,7 +7,7 @@
 | Целевая папка | Только «Загрузки» (на месте) | Любая (в т.ч. другой диск, напр. `E:\Temponary\.Downloads`) |
 | Дубликаты | Нет | По хешу (SHA256), дубли → `_Duplicates` |
 | Автоочистка | Нет | Старые установщики (>N дней) → `_Quarantine` |
-| Конфигурация | Только в скрипте | JSON-конфиг + параметры командной строки |
+| Конфигурация | Только в скрипте | Все настройки в скрипте (блок SETTINGS) + параметры командной строки |
 | Логирование | Нет | Файл `organize.log` в целевой папке |
 | Dry-run | Нет | Есть (`-DryRun`) |
 
@@ -17,9 +17,8 @@
 
 | Параметр | Тип | Описание |
 |----------|-----|----------|
-| `SourcePath` | string | Исходная папка (по умолчанию: `%USERPROFILE%\Downloads`). |
-| `TargetPath` | string | Целевая папка (по умолчанию: `E:\Temponary\.Downloads`). |
-| `ConfigFile` | string | Путь к JSON-конфигу. Параметры переопределяют значения из конфига. |
+| `SourcePath` | string | Переопределить исходную папку (опционально). |
+| `TargetPath` | string | Переопределить целевую папку (опционально). |
 | `DryRun` | switch | Только показать, что будет сделано; файлы не переносить. |
 | `SkipDuplicates` | switch | Не искать дубликаты по хешу. |
 | `SkipAutoClean` | switch | Не перемещать старые установщики в `_Quarantine`. |
@@ -36,8 +35,8 @@
 # Другой источник и цель
 .\organize_downloads_v0.2.ps1 -SourcePath "C:\Users\Me\Downloads" -TargetPath "D:\Sorted"
 
-# Конфиг из файла
-.\organize_downloads_v0.2.ps1 -ConfigFile ".\config_v0.2.json"
+# Переопределить путь из скрипта
+.\organize_downloads_v0.2.ps1 -TargetPath "D:\Sorted"
 
 # Только посмотреть, ничего не переносить
 .\organize_downloads_v0.2.ps1 -DryRun
@@ -48,26 +47,19 @@
 
 ---
 
-## Конфиг (config_v0.2.json)
+## Настройки в скрипте (блок SETTINGS)
 
-| Поле | Описание |
-|------|----------|
-| `SourcePath` | Исходная папка. Пустая строка = `%USERPROFILE%\Downloads`. |
-| `TargetPath` | Целевая папка (напр. `E:\Temponary\.Downloads`). |
-| `OldInstallerDays` | Возраст в днях: установщики старше этого срока переносятся в `_Quarantine`. |
-| `ChatExportPattern` | Регулярное выражение для имён .md-файлов, попадающих в `chat_export`. |
-| `Categories` | Объект «папка → массив расширений». Опционально; если не задан, используются встроенные категории. |
+Все настройки задаются в начале `organize_downloads_v0.2.ps1` в блоке `========== SETTINGS ==========`:
 
-Пример фрагмента конфига:
+| Переменная | Описание |
+|------------|----------|
+| `$script:DefaultSource` | Исходная папка (по умолчанию: `%USERPROFILE%\Downloads`). |
+| `$script:DefaultTarget` | Целевая папка (напр. `E:\Temponary\.Downloads`). |
+| `$script:OldInstallerDays` | Возраст в днях: установщики старше этого срока переносятся в `_Quarantine`. |
+| `$script:ChatExportPattern` | Регулярное выражение для имён .md-файлов в `chat_export`. |
+| `$script:Folders` | Хеш «папка → массив расширений». |
 
-```json
-{
-  "SourcePath": "",
-  "TargetPath": "E:\\Temponary\\.Downloads",
-  "OldInstallerDays": 30,
-  "ChatExportPattern": "google|gemini|gpt|chat"
-}
-```
+Скрипт самодостаточен: один файл, внешние конфиги не нужны.
 
 ---
 

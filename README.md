@@ -40,11 +40,11 @@ cd organize-downloads
 .\organize_downloads.ps1
 ```
 
-**v0.2 (перенос на другой диск, дубликаты, автоочистка, лог):**
+**v0.2 (перенос на другой диск, дубликаты, автоочистка, лог; один файл, все настройки в скрипте):**
 ```powershell
 .\organize_downloads_v0.2.ps1
-# или с конфигом и целью:
-.\organize_downloads_v0.2.ps1 -ConfigFile ".\config_v0.2.json" -TargetPath "E:\Temponary\.Downloads"
+# переопределить цель:
+.\organize_downloads_v0.2.ps1 -TargetPath "E:\Temponary\.Downloads"
 # только показать план (ничего не переносить):
 .\organize_downloads_v0.2.ps1 -DryRun
 ```

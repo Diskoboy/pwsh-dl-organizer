@@ -1,12 +1,11 @@
 <#
 .SYNOPSIS
   Organize Downloads v0.2 - sort, hash duplicates, auto-clean old installers, logging.
+  Self-contained: all settings are in this script (edit the SETTINGS block below).
 .PARAMETER SourcePath
-  Source folder (default: %USERPROFILE%\Downloads).
+  Override source folder (optional).
 .PARAMETER TargetPath
-  Target folder (default: E:\Temponary\.Downloads).
-.PARAMETER ConfigFile
-  Path to JSON config. Params override config.
+  Override target folder (optional).
 .PARAMETER DryRun
   Show what would be done, no moves.
 .PARAMETER SkipDuplicates
@@ -19,7 +18,6 @@
 param(
     [string] $SourcePath = "",
     [string] $TargetPath = "",
-    [string] $ConfigFile = "",
     [switch] $DryRun,
     [switch] $SkipDuplicates,
     [switch] $SkipAutoClean
@@ -29,9 +27,9 @@ param(
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# --- Конфиг по умолчанию ---
-$script:DefaultSource = Join-Path $env:USERPROFILE "Downloads"
-$script:DefaultTarget = "E:\Temponary\.Downloads"
+# ========== SETTINGS (edit here, no external files) ==========
+$script:DefaultSource   = Join-Path $env:USERPROFILE "Downloads"
+$script:DefaultTarget   = "E:\Temponary\.Downloads"
 $script:OldInstallerDays = 30
 $script:ChatExportPattern = "google|gemini|gpt|chat"
 $script:Folders = @{
@@ -46,30 +44,9 @@ $script:Folders = @{
     "_Duplicates"  = @()
     "Other"        = @()
 }
+# ========== END SETTINGS ==========
 
-# Загрузка конфига из JSON
-if ($ConfigFile -and (Test-Path -LiteralPath $ConfigFile)) {
-    try {
-        $cfg = Get-Content -LiteralPath $ConfigFile -Raw -Encoding UTF8 | ConvertFrom-Json
-        if ($cfg.TargetPath) { $script:DefaultTarget = $cfg.TargetPath }
-        if ($cfg.SourcePath) { $script:DefaultSource = $cfg.SourcePath }
-        if ($cfg.OldInstallerDays -gt 0) { $script:OldInstallerDays = $cfg.OldInstallerDays }
-        if ($cfg.ChatExportPattern) { $script:ChatExportPattern = $cfg.ChatExportPattern }
-        if ($cfg.Categories) {
-            $script:Folders = @{}
-            foreach ($p in $cfg.Categories.PSObject.Properties) {
-                $val = $p.Value
-                if ($val -is [array]) { $script:Folders[$p.Name] = @($val) } else { $script:Folders[$p.Name] = @($val) }
-            }
-            if (-not $script:Folders["_Quarantine"]) { $script:Folders["_Quarantine"] = @() }
-            if (-not $script:Folders["_Duplicates"]) { $script:Folders["_Duplicates"] = @() }
-        }
-    } catch {
-        Write-Warning "Config load failed: $_"
-    }
-}
-
-# Параметры переопределяют конфиг
+# Params override script settings
 if ($SourcePath) { $script:DefaultSource = $SourcePath }
 if ($TargetPath) { $script:DefaultTarget = $TargetPath }
 
