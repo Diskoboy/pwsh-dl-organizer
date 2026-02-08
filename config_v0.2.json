@@ -1,0 +1,16 @@
+{
+  "SourcePath": "",
+  "TargetPath": "E:\\Temponary\\.Downloads",
+  "OldInstallerDays": 30,
+  "ChatExportPattern": "google|gemini|gpt|chat",
+  "Categories": {
+    "Installers": [ ".exe", ".msi" ],
+    "Images": [ ".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".ico" ],
+    "Videos": [ ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".webm" ],
+    "Audio": [ ".mp3", ".wav", ".flac", ".m4a", ".ogg" ],
+    "Archives": [ ".zip", ".7z", ".rar", ".tar", ".gz" ],
+    "Documents": [ ".txt", ".xlsx", ".xls", ".pdf", ".docx", ".doc", ".md" ],
+    "chat_export": [],
+    "Other": []
+  }
+}
